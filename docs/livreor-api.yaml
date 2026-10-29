@@ -1,0 +1,110 @@
+openapi: 3.1.0
+
+info:
+  title: API Livre d'or
+  version: 1.0.0
+  description: |
+    Contrat d'API entre le back-end (Symfony) et le front-end (Vue) du projet Livre d'or.
+
+    Périmètre (MVP) : poster un message et afficher la liste des messages.
+    Échanges en JSON
+
+servers:
+  - url: http://localhost:8000/api
+    description: Développement local
+
+paths:
+  /messages:
+    get:
+      summary: Lister les messages
+      description: Retourne tous les messages, du plus récent au plus ancien.
+      responses:
+        '200':
+          description: Liste des messages.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+              example:
+                - id: 2
+                  author: Sophie
+                  content: Super site, bravo !
+                  createdAt: '2026-10-29T11:09:00Z'
+                - id: 1
+                  author: Lucas
+                  content: Premier message, coucou tout le monde.
+                  createdAt: '2026-10-28T16:42:10Z'
+
+    post:
+      summary: Poster un message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageInput'
+            example:
+              author: Sophie
+              content: Super site, bravo !
+      responses:
+        '201':
+          description: Message créé.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+              example:
+                id: 2
+                author: Sophie
+                content: Super site, bravo !
+                createdAt: '2026-10-29T11:09:00Z'
+        '422':
+          description: Données invalides (champ vide, trop court ou trop long).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              example:
+                errors:
+                  author: Le pseudo doit contenir au moins 2 caractères.
+
+components:
+  schemas:
+    MessageInput:
+      type: object
+      required: [author, content]
+      properties:
+        author:
+          type: string
+          minLength: 2
+          maxLength: 50
+        content:
+          type: string
+          minLength: 1
+          maxLength: 1000
+
+    Message:
+      type: object
+      required: [id, author, content, createdAt]
+      properties:
+        id:
+          type: integer
+        author:
+          type: string
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    ValidationError:
+      type: object
+      required: [errors]
+      properties:
+        errors:
+          type: object
+          description: Un message d'erreur par champ invalide.
+          additionalProperties:
+            type: string

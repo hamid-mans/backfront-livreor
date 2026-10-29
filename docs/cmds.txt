@@ -1,0 +1,5 @@
+Lancer Swagger avec Docker
+docker run -p 8080:8080 -e SWAGGER_JSON=/docs/livreor-api.yaml -v ./docs:/docs swaggerapi/swagger-ui
+
+Lancer le serveur de Prism
+npx @stoplight/prism-cli mock docs/openapi.yaml -p 8000

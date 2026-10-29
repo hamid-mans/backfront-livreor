@@ -1,0 +1,24 @@
+/* Polices : une serif « plume » pour les titres, une serif lisible pour le texte
+   (les @import doivent rester en tout début de fichier) */
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap");
+@import "tailwindcss";
+@plugin "tailwindcss-primeui";
+
+@theme {
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-serif: "Lora", Georgia, serif;
+}
+
+/* Fond « papier » et encre par défaut, en clair et en sombre */
+body {
+  font-family: var(--font-serif);
+  background-color: var(--p-surface-50);
+  color: var(--p-surface-800);
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: var(--p-surface-950);
+    color: var(--p-surface-100);
+  }
+}
