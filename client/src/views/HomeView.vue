@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import Card from 'primevue/card';
+import MessageList from '@/components/MessageList.vue'
 
 const messages = ref([])
 
@@ -9,13 +9,6 @@ onMounted(async () => {
   messages.value = await res.json()
 })
 
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleString('fr-FR', {
-    dateStyle: 'long',
-    timeStyle: 'short'
-  })
-}
-
 </script>
 
 <template>
@@ -23,14 +16,5 @@ function formatDate(iso: string): string {
     Bienvenue sur le livre d'Or
   </h1>
 
-  <ul>
-    <li v-for="message in messages" :key="message.id">
-      <Card class="mb-4">
-        <template #content>
-          <p>{{ message.content }}</p>
-          <p class="italic text-sm mt-2">{{ formatDate(message.createdAt) }} - Par {{ message.author }}</p>
-        </template>
-      </Card>
-    </li>
-  </ul>
+  <MessageList :messages="messages" />
 </template>
