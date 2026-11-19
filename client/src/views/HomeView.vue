@@ -31,7 +31,6 @@ const handleSubmit = async () => {
 		errors.value = {}
 
 		const data = await res.json()
-		console.log(data)
 
 		if (res.status === 201) {
 			form.value.content = ''
@@ -41,7 +40,7 @@ const handleSubmit = async () => {
 			errors.value = data.errors
 		}
 	} catch (err) {
-		console.log(err)
+		console.error(err)
 	}
 }
 
@@ -59,7 +58,7 @@ const handleSubmit = async () => {
 
 			<div class="flex gap-2">
 				<InputText placeholder="Auteur" v-model="form.author" />
-				<Button type="submit" label="Envoyer" />			
+				<Button type="submit" label="Envoyer" />
 			</div>
 			<small v-if="errors.author">{{ errors.author }}</small>
 		</form>
