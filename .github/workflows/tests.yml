@@ -1,0 +1,83 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Annule le run précédent si on pousse à nouveau sur la même branche
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: client
+
+jobs:
+  quality:
+    name: Lint et types
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+      - run: npm ci
+      # Sans --fix : en CI on veut signaler les erreurs, pas modifier les fichiers
+      - name: ESLint
+        run: npx eslint .
+      - name: Vérification des types
+        run: npm run type-check
+
+  unit:
+    name: Tests unitaires
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+      - run: npm ci
+      - run: npx vitest run --project unit
+
+  integration:
+    name: Tests d'intégration (Prism)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+      - run: npm ci
+      # Prism est démarré automatiquement sur l'URL VITE_API_URL du .env
+      - run: npm run test:integration
+
+  e2e:
+    name: Tests E2E (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+      - run: npm ci
+      - name: Installer Chromium
+        run: npx playwright install --with-deps chromium
+      # Playwright démarre Prism et le serveur Vite
+      - run: npm run test:e2e
+      - name: Rapport Playwright
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: client/playwright-report/
+          retention-days: 14
