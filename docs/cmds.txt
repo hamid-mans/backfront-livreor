@@ -19,6 +19,19 @@ npm run test:integration
 Lancer tous les tests (unitaires + intégration) une seule fois
 npx vitest run
 
+Installer Playwright et le navigateur Chromium (une seule fois)
+npm i -D @playwright/test
+npx playwright install chromium
+
+Lancer les tests E2E (Prism et le front sont démarrés automatiquement s'ils ne tournent pas)
+npm run test:e2e
+
+Lancer les tests E2E en mode interface graphique
+npx playwright test --ui
+
+Ouvrir le rapport HTML du dernier lancement E2E
+npx playwright show-report
+
 Lancer un seul fichier de test
 npx vitest run src/components/__tests__/MessageList.spec.ts
 

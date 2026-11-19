@@ -22,7 +22,7 @@ export default mergeConfig(
           extends: true,
           test: {
             name: 'unit',
-            exclude: [...configDefaults.exclude, INTEGRATION_TESTS],
+            exclude: [...configDefaults.exclude, INTEGRATION_TESTS, 'e2e/**'],
             // Fausse URL : les tests unitaires ne doivent jamais toucher le réseau
             env: { VITE_API_URL: 'http://api.test' },
           },
