@@ -1,6 +1,8 @@
 export type Message = {
-    id: Number
-    content: String
-    author: String
-    createdAt: Date
+  id: number
+  content: string
+  author: string
+  createdAt: string
 }
+
+export type MessageInput = Pick<Message, 'content' | 'author'>

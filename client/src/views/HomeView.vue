@@ -3,12 +3,12 @@ import { ref, onMounted } from 'vue'
 import MessageList from '@/components/MessageList.vue'
 import { Button, InputText, Textarea } from 'primevue'
 import type { Message } from '@/types/message'
+import { getMessages, postMessage } from '@/services/messages'
 
 const messages = ref<Message[]>([])
 
 onMounted(async () => {
-	const res = await fetch(`${import.meta.env.VITE_API_URL}/messages`)
-	messages.value = await res.json()
+	messages.value = await getMessages()
 })
 
 const form = ref({
@@ -20,30 +20,21 @@ const errors = ref<Record<string, string>>({})
 
 const handleSubmit = async () => {
 	try {
-		const res = await fetch(`${import.meta.env.VITE_API_URL}/messages`, {
-			method: 'POST',
-			body: JSON.stringify(form.value),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
-
 		errors.value = {}
 
-		const data = await res.json()
+		const result = await postMessage({ ...form.value })
 
-		if (res.status === 201) {
+		if (result.ok) {
 			form.value.content = ''
 			form.value.author = ''
-			messages.value.unshift(data)
-		} else if(res.status === 422) {
-			errors.value = data.errors
+			messages.value.unshift(result.message)
+		} else {
+			errors.value = result.errors
 		}
 	} catch (err) {
 		console.error(err)
 	}
 }
-
 </script>
 
 <template>
@@ -54,13 +45,13 @@ const handleSubmit = async () => {
 	<div class="my-5">
 		<form @submit.prevent="handleSubmit">
 			<Textarea class="w-full" placeholder="Votre message" v-model="form.content" />
-			<small v-if="errors.content">{{ errors.content }}</small>
+			<small v-if="errors.content" data-test="error-content">{{ errors.content }}</small>
 
 			<div class="flex gap-2">
 				<InputText placeholder="Auteur" v-model="form.author" />
 				<Button type="submit" label="Envoyer" />
 			</div>
-			<small v-if="errors.author">{{ errors.author }}</small>
+			<small v-if="errors.author" data-test="error-author">{{ errors.author }}</small>
 		</form>
 	</div>
 

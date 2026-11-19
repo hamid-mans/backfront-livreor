@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import { defineProps } from 'vue'
-import Card from 'primevue/card';
+import Card from 'primevue/card'
+import type { Message } from '@/types/message'
+
+defineProps<{
+  messages: Message[]
+}>()
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleString('fr-FR', {
@@ -8,10 +12,6 @@ function formatDate(iso: string): string {
     timeStyle: 'short'
   })
 }
-
-defineProps({
-  messages: Array
-})
 </script>
 
 <template>
