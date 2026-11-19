@@ -40,3 +40,5 @@ npm run type-check
 
 Lancer le linter ESLint
 npm run lint
+
+workkflow dipatch
