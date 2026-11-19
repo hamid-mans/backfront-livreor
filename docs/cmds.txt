@@ -5,12 +5,18 @@ Lancer le serveur de Prism
 npx @stoplight/prism-cli mock docs/livreor-api.yaml -p 8000
 
 Installer les dépendances de test
-npm i -D vitest @vue/test-utils jsdom @types/jsdom
+npm i -D vitest @vue/test-utils jsdom @types/jsdom @stoplight/prism-cli
 
 Lancer les tests unitaires en mode watch
 npm run test:unit
 
 Lancer les tests unitaires une seule fois
+npx vitest run --project unit
+
+Lancer les tests d'intégration avec l'API (VITE_API_URL du .env, Prism démarré automatiquement s'il ne tourne pas)
+npm run test:integration
+
+Lancer tous les tests (unitaires + intégration) une seule fois
 npx vitest run
 
 Lancer un seul fichier de test
