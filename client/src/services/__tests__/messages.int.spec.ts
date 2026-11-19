@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest'
 import { getMessages, postMessage } from '@/services/messages'
 
-// Tests d'intégration : appels réels vers l'API définie par VITE_API_URL (Prism)
+// Tests d'intégration : appels réels vers l'API définie par VITE_API_URL.
+// Ils vérifient la forme des réponses et les règles du contrat, pas leur contenu exact :
+// ils fonctionnent donc avec Prism comme avec le vrai back (y compris base vide).
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/
 
@@ -11,7 +13,6 @@ describe('services/messages (intégration API)', () => {
       const messages = await getMessages()
 
       expect(Array.isArray(messages)).toBe(true)
-      expect(messages.length).toBeGreaterThan(0)
 
       for (const message of messages) {
         expect(message).toEqual({
@@ -45,8 +46,7 @@ describe('services/messages (intégration API)', () => {
       expect(result.ok).toBe(false)
       if (result.ok) return
 
-      expect(result.errors).toBeTypeOf('object')
-      expect(Object.keys(result.errors).length).toBeGreaterThan(0)
+      expect(result.errors).toHaveProperty('author')
       for (const message of Object.values(result.errors)) {
         expect(message).toBeTypeOf('string')
       }
