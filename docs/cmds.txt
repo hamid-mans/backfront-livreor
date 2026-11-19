@@ -3,3 +3,21 @@ docker run -p 8080:8080 -e SWAGGER_JSON=/docs/livreor-api.yaml -v ./docs:/docs s
 
 Lancer le serveur de Prism
 npx @stoplight/prism-cli mock docs/livreor-api.yaml -p 8000
+
+Installer les dépendances de test
+npm i -D vitest @vue/test-utils jsdom @types/jsdom
+
+Lancer les tests unitaires en mode watch
+npm run test:unit
+
+Lancer les tests unitaires une seule fois
+npx vitest run
+
+Lancer un seul fichier de test
+npx vitest run src/components/__tests__/MessageList.spec.ts
+
+Vérifier les types, y compris les fichiers de test
+npm run type-check
+
+Lancer le linter ESLint
+npm run lint
