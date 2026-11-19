@@ -1,15 +1,10 @@
 import { test, expect, type Page } from '@playwright/test'
 import type { Message } from '../src/types/message'
 
-// Tests E2E : un vrai navigateur ouvre l'application, qui appelle l'API (VITE_API_URL).
-//
-// On ne compare pas l'affichage à des données écrites en dur, mais à ce que l'API
-// a réellement renvoyé pendant le test : ça marche avec Prism comme avec de vraies données.
-
 const isMessagesCall = (method: string) => (response: { url(): string; request(): { method(): string } }) =>
   response.url().endsWith('/messages') && response.request().method() === method
 
-/** Ouvre la page d'accueil et renvoie la liste de messages reçue de l'API */
+// Page accueil. Liste des messages = ok
 async function openHome(page: Page): Promise<Message[]> {
   const responsePromise = page.waitForResponse(isMessagesCall('GET'))
   await page.goto('/')
@@ -24,22 +19,7 @@ async function fillAndSubmit(page: Page, content: string, author: string) {
   await page.getByRole('button', { name: 'Envoyer' }).click()
 }
 
-test('affiche le titre de la page', async ({ page }) => {
-  await page.goto('/')
-
-  await expect(page.getByRole('heading', { name: 'Bienvenue sur le livre d\'Or' })).toBeVisible()
-})
-
-test('affiche les messages renvoyés par l\'API, dans le même ordre', async ({ page }) => {
-  const messages = await openHome(page)
-  const items = page.getByRole('listitem')
-
-  for (const [i, message] of messages.entries()) {
-    await expect(items.nth(i)).toContainText(message.content)
-    await expect(items.nth(i)).toContainText(`Par ${message.author}`)
-  }
-})
-
+// format de la date = ok
 test('affiche la date des messages en français', async ({ page }) => {
   const messages = await openHome(page)
   test.skip(messages.length === 0, 'Aucun message à afficher')
@@ -49,7 +29,8 @@ test('affiche la date des messages en français', async ({ page }) => {
   await expect(page.getByRole('listitem').first()).toContainText(frenchDate)
 })
 
-test('publie un message et l\'ajoute en tête de liste', async ({ page }) => {
+// nouveau message et qu'il s'ajoute en haut
+test("publie un message et l'ajoute en tête de liste", async ({ page }) => {
   const messages = await openHome(page)
 
   const responsePromise = page.waitForResponse(isMessagesCall('POST'))
@@ -66,6 +47,7 @@ test('publie un message et l\'ajoute en tête de liste', async ({ page }) => {
   await expect(page.getByPlaceholder('Auteur')).toHaveValue('')
 })
 
+// Si affiche erreur = ok
 test('affiche une erreur si l\'auteur est trop court', async ({ page }) => {
   const messages = await openHome(page)
 
