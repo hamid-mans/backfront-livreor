@@ -4,7 +4,7 @@ info:
   title: API Livre d'or
   version: 1.0.0
   description: |
-    Contrat d'API entre le back-end (Symfony) et le front-end (Vue) du projet Livre d'or.
+    Contrat d'API entre le back-end (Express) et le front-end (Vue) du projet Livre d'or.
 
     Périmètre (MVP) : poster un message et afficher la liste des messages.
     Échanges en JSON
@@ -60,6 +60,14 @@ paths:
                 author: Sophie
                 content: Super site, bravo !
                 createdAt: '2026-10-29T11:09:00Z'
+        '400':
+          description: JSON mal formaté
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: JSON mal formaét
         '422':
           description: Données invalides (champ vide, trop court ou trop long).
           content:
@@ -80,10 +88,14 @@ components:
           type: string
           minLength: 2
           maxLength: 50
+          pattern: '\S'
+          description: Ce champ doit contenir entre 2 et 50 caractères et ne doit pas être vide.
         content:
           type: string
           minLength: 1
           maxLength: 1000
+          pattern: '\S'
+          description: Ce champ doit contenir entre 1 et 1000 caractères et ne doit pas être vide.
 
     Message:
       type: object
@@ -108,3 +120,10 @@ components:
           description: Un message d'erreur par champ invalide.
           additionalProperties:
             type: string
+
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
