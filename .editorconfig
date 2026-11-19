@@ -10,7 +10,6 @@ indent_style = tab
 indent_size = 4
 tab_width = 4
 
-# Le YAML interdit les tabulations pour l'indentation
 [*.{yml,yaml}]
 indent_style = space
 indent_size = 2

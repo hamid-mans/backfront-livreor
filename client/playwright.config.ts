@@ -1,7 +1,6 @@
 import { defineConfig, devices } from '@playwright/test'
 import { loadEnv } from 'vite'
 
-// URL de l'API (Prism) lue depuis le fichier .env
 const apiUrl = loadEnv('development', process.cwd(), 'VITE_').VITE_API_URL
 if (!apiUrl) {
   throw new Error('VITE_API_URL est absent du fichier .env')
@@ -15,7 +14,6 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  // En CI : annotations dans GitHub + rapport HTML (téléchargeable depuis le run)
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'html',
 
   use: {
@@ -27,7 +25,6 @@ export default defineConfig({
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
   ],
 
-  // Playwright démarre (ou réutilise s'ils tournent déjà) l'API mock et le front
   webServer: [
     {
       command: `npx prism mock ../docs/livreor-api.yaml -p ${new URL(apiUrl).port}`,

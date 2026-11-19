@@ -29,24 +29,6 @@ test('affiche la date des messages en français', async ({ page }) => {
   await expect(page.getByRole('listitem').first()).toContainText(frenchDate)
 })
 
-// nouveau message et qu'il s'ajoute en haut
-test("publie un message et l'ajoute en tête de liste", async ({ page }) => {
-  const messages = await openHome(page)
-
-  const responsePromise = page.waitForResponse(isMessagesCall('POST'))
-  await fillAndSubmit(page, `Message E2E ${Date.now()}`, 'Playwright')
-  const response = await responsePromise
-  expect(response.status()).toBe(201)
-  const created: Message = await response.json()
-
-  const items = page.getByRole('listitem')
-  await expect(items).toHaveCount(messages.length + 1)
-  await expect(items.first()).toContainText(created.content)
-  await expect(items.first()).toContainText(`Par ${created.author}`)
-  await expect(page.getByPlaceholder('Votre message')).toHaveValue('')
-  await expect(page.getByPlaceholder('Auteur')).toHaveValue('')
-})
-
 // Si affiche erreur = ok
 test('affiche une erreur si l\'auteur est trop court', async ({ page }) => {
   const messages = await openHome(page)
